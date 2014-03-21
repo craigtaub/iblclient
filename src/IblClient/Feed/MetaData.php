@@ -5,8 +5,18 @@
  */
 class IblClient_Feed_MetaData
 {
-    private $_version;
-    private $_schema;
-    private $_timestamp;
-    private $_uri;
+    protected $_version;
+    protected $_schema;
+    protected $_timestamp;
+
+    public function __construct($json) {
+    	$this->_version = $json['version'];
+    	$this->_schema = $json['schema'];
+    	$this->_timestamp = $json['timestamp'];
+    }
+
+    public function getVersion() {
+    	return $this->_version;
+    }
+
 }

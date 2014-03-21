@@ -2,19 +2,19 @@
 /**
  * Class which Ibl feeds extend. Constructor starts the processData method with the correct data for the feed
  */
-class IblClient_Feed_Base
+class IblClient_Feed_Base implements IblClient_Feed_Interface
 {
-    protected $_metadata;
+    protected $metadata;
  
     public function __construct(array $data, IblClient_Feed_MetaData $metadata) {
         if (!$data) {
-            throw new Exception();
+            throw new IblClient_Exception_EmptyFeed();
         }
-        $this->processData($data);
         $this->_metadata = $metadata;
     }
-    
+
     public function getMetadata() {
         return $this->_metadata;
     }
+
 }

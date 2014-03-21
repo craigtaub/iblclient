@@ -1,46 +1,59 @@
 <?php
 
+use Guzzle\Http\Client;
+
 class IblClient_Factory
 {
-    static private $_baseUrl = 'http://open.live.bbc.co.uk/ibl/v1/';
     static private $_client;
+    static private $_baseUrl = 'http://open.live.bbc.co.uk';
+    static private $_version = "/ibl/v1/";
+    
+    private $_feed;
+    private $_parameters = array();
 
-    public function build($feed, $parameters = array()) {
-        $response = self::fetch($feed, $parameters);
-        
-        $className = self::_getClassName($response->feedname);
-        if (!class_exists($classname)) {
-            throw new Exception('No class defined for feed');
+    public function __construct($feed, $parameters = array()) {
+        $this->_feed = $feed;
+        $this->_parameters = $parameters;
+    }
+
+    public function build() {
+        $response = $this->fetch();
+
+        $className = $this->_getClassName($response->feedname);
+
+        if (!class_exists($className)) {
+            throw new IblClient_Exception_FeedClassMissing();
         }
-        
-        return new $classname($response->data, $response->metadata);        
+
+        return new $className($response->data, $response->metadata);    
     }
     
-    static public function fetch($feed, $parameters = array()) {
+    public function fetch() {
         $client = self::getClient();
-        $request = $client->get(self::$_baseUrl . $feed, array(), array('query' => $parameters));
+        $request = $client->get( self::$_version . $this->_feed, 
+                                    array(), 
+                                    array('query' => $this->_parameters));
+        //var_dump($request->getUrl());die;
+        $response = $request->send();
+        $response->getBody();
+        $json = $response->json();
 
-        $json = $request->json();
-
-        return array(
+        return (object) array(
             'feedname' => current(array_keys(array_slice($json, -1, 1))),
             'data' => array_pop($json),
             'metadata' => new IblClient_Feed_MetaData($json)
         );
     }
     
-    static public function getClient() {
+    public static function getClient() {
         if (!self::$_client) {    
-
-            $client = new GuzzleHttp\Client();
-
+            $client = new Client(self::$_baseUrl);
             self::$_client = $client;
         }
-        
         return self::$_client;
     }
     
-    static private function _getClassName($feedName) {
+    private function _getClassName($feedName) {
         return 'IblClient_Feed_' . str_replace(' ', '', ucwords(str_replace('_', ' ', $feedName)));
     }
 }
