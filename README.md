@@ -10,8 +10,15 @@ Run Unit tests.
     
 Usage
 
-        $client = new IblClient();
-        $url = "";
-        $params = array("api_key" => "");
-        $feed_object = $client->fetch($url, $params);
+    $client = new IblClient();
+    $url = "";
+    $client->setAPIKey("");
+    try {
+        $feedObject = $client->fetch($url);
+    } catch (IblClient_Exception $e) {
+        // Do something with error
+    }
+    echo $feedObject->getMetadata()->getVersion();
+    echo $feedObject->getEpisode('b03x19tb')->getSubtitle();
+
   
