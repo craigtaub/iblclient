@@ -4,7 +4,7 @@
     "description": "PHP client library for iBL",
     "license": "BSD",
     "require": {
-        "guzzle/guzzle":    "v3.8.*"
+        "guzzle/guzzle": "v3.8.1"
     },
     "require-dev": {
         "ext-curl": "*",
