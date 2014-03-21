@@ -4,8 +4,6 @@
     "description": "PHP client library for iBL",
     "license": "BSD",
     "require": {
-        "guzzlehttp/streams": "1.0.0-rc.1",
-        "guzzlehttp/guzzle": "4.0.0-rc.1"
         "guzzle/guzzle":    "v3.8.*"
     },
     "require-dev": {
